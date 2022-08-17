@@ -261,7 +261,7 @@ public class StepView extends View {
     public void setStepsNumber(int number) {
         steps.clear();
         displayMode = DISPLAY_MODE_NO_TEXT;
-        stepsNumber = number;
+        //stepsNumber = number;
         requestLayout();
         go(START_STEP, false);
     }
@@ -274,9 +274,9 @@ public class StepView extends View {
         if (step >= START_STEP && step < getStepCount()) {
             if (animate && animationType != ANIMATION_NONE && startLinesX != null) {
                 if (Math.abs(step - currentStep) > 1) {
-                    endAnimation();
-                    currentStep = step;
-                    invalidate();
+                    nextAnimatedStep = currentStep + 1;
+                    state = ANIMATE_STEP_TRANSITION;
+                    animateMultiple(step);
                 } else {
                     nextAnimatedStep = step;
                     state = ANIMATE_STEP_TRANSITION;
@@ -320,6 +320,34 @@ public class StepView extends View {
                 state = IDLE;
                 currentStep = step;
                 invalidate();
+            }
+        });
+        animator.setDuration(animationDuration);
+        animator.start();
+    }
+
+    private void animateMultiple(final int step) {
+        endAnimation();
+        animator = getAnimator(currentStep + 1);
+        if (animator == null) {
+            return;
+        }
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                animatedFraction = valueAnimator.getAnimatedFraction();
+                invalidate();
+            }
+        });
+        animator.addListener(new AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                state = IDLE;
+                currentStep += 1;
+                invalidate();
+                if (currentStep != step) {
+                   go(step, true);
+                }
             }
         });
         animator.setDuration(animationDuration);
@@ -586,7 +614,7 @@ public class StepView extends View {
     private void measureLines() {
         startLinesX = new int[getStepCount() - 1];
         endLinesX = new int[getStepCount() - 1];
-        int padding = stepPadding + selectedCircleRadius;
+        int padding = selectedCircleRadius;
 
         for (int i = 1; i < getStepCount(); i++) {
             if (isRtl()) {
@@ -660,7 +688,10 @@ public class StepView extends View {
             } else {
                 radius = selectedCircleRadius;
             }
+            paint.setColor(Color.parseColor("#4508CC51"));
             canvas.drawCircle(circleCenterX, circleCenterY, radius, paint);
+            paint.setColor(Color.parseColor("#08CC51"));
+            canvas.drawCircle(circleCenterX, circleCenterY, radius - 18, paint);
 
             paint.setColor(selectedStepNumberColor);
             paint.setTextSize(stepNumberTextSize);
@@ -670,9 +701,10 @@ public class StepView extends View {
             textPaint.setColor(selectedTextColor);
             drawText(canvas, text, textY, step);
         } else if (isDone) {
-            paint.setColor(doneCircleColor);
+            paint.setColor(Color.parseColor("#4508CC51"));
             canvas.drawCircle(circleCenterX, circleCenterY, doneCircleRadius, paint);
-
+            paint.setColor(Color.parseColor("#08CC51"));
+            canvas.drawCircle(circleCenterX, circleCenterY, doneCircleRadius - 18, paint);
             drawCheckMark(canvas, circleCenterX, circleCenterY);
 
             if (state == ANIMATE_STEP_TRANSITION && step == nextAnimatedStep && nextAnimatedStep < currentStep) {
@@ -694,11 +726,16 @@ public class StepView extends View {
                                 selectedCircleColor,
                                 animatedFraction)
                         );
+                        paint.setColor(Color.parseColor("#45BCBCBC"));
                         canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius, paint);
+                        paint.setColor(Color.parseColor("#BCBCBC"));
+                        canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius - 18, paint);
                     } else {
-                        int animatedRadius = (int) (selectedCircleRadius * animatedFraction);
-                        paint.setColor(selectedCircleColor);
+                        int animatedRadius = (int) (selectedCircleRadius);
+                        paint.setColor(Color.parseColor("#45BCBCBC"));
                         canvas.drawCircle(circleCenterX, circleCenterY, animatedRadius, paint);
+                        paint.setColor(Color.parseColor("#BCBCBC"));
+                        canvas.drawCircle(circleCenterX, circleCenterY, animatedRadius - 18, paint);
                     }
                 }
                 if (animationType != ANIMATION_NONE) {
@@ -728,7 +765,13 @@ public class StepView extends View {
                 if (nextStepCircleEnabled && nextStepCircleColor != 0) {
                     paint.setColor(nextStepCircleColor);
                     canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius, paint);
+                    paint.setColor(Color.YELLOW);
+                    canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius - 18, paint);
                 }
+                paint.setColor(Color.parseColor("#45BCBCBC"));
+                canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius, paint);
+                paint.setColor(Color.parseColor("#BCBCBC"));
+                canvas.drawCircle(circleCenterX, circleCenterY, selectedCircleRadius - 18, paint);
 
                 paint.setColor(nextTextColor);
 
@@ -743,50 +786,50 @@ public class StepView extends View {
     }
 
     private void drawNumber(Canvas canvas, String number, int circleCenterX, Paint paint) {
-        paint.getTextBounds(number, 0, number.length(), bounds);
-        float y = circlesY + bounds.height() / 2f - bounds.bottom;
-        canvas.drawText(number, circleCenterX, y, paint);
+//        paint.getTextBounds(number, 0, number.length(), bounds);
+//        float y = circlesY + bounds.height() / 2f - bounds.bottom;
+//        canvas.drawText(number, circleCenterX, y, paint);
     }
 
     private void drawText(Canvas canvas, String text, int y, int step) {
-        if (text.isEmpty()) {
-            return;
-        }
-        StaticLayout layout = textLayouts[step];
-        canvas.save();
-        canvas.translate(circlesX[step], y);
-        layout.draw(canvas);
-        canvas.restore();
+//        if (text.isEmpty()) {
+//            return;
+//        }
+//        StaticLayout layout = textLayouts[step];
+//        canvas.save();
+//        canvas.translate(circlesX[step], y);
+//        layout.draw(canvas);
+//        canvas.restore();
     }
 
     private void drawCheckMark(Canvas canvas, int circleCenterX, int circleCenterY) {
-        paint.setColor(doneStepMarkColor);
-        float width = stepNumberTextSize * 0.1f;
-        paint.setStrokeWidth(width);
-        Rect bounds = new Rect(
-                (int) (circleCenterX - width * 4.5),
-                (int) (circleCenterY - width * 3.5),
-                (int) (circleCenterX + width * 4.5),
-                (int) (circleCenterY + width * 3.5));
-        canvas.drawLine(
-                bounds.left + 0.5f * width,
-                bounds.bottom - 3.25f * width,
-                bounds.left + 3.25f * width,
-                bounds.bottom - 0.75f * width, paint);
-        canvas.drawLine(
-                bounds.left + 2.75f * width,
-                bounds.bottom - 0.75f * width,
-                bounds.right - 0.375f * width,
-                bounds.top + 0.75f * width, paint);
+//        paint.setColor(doneStepMarkColor);
+//        float width = stepNumberTextSize * 0.1f;
+//        paint.setStrokeWidth(width);
+//        Rect bounds = new Rect(
+//                (int) (circleCenterX - width * 4.5),
+//                (int) (circleCenterY - width * 3.5),
+//                (int) (circleCenterX + width * 4.5),
+//                (int) (circleCenterY + width * 3.5));
+//        canvas.drawLine(
+//                bounds.left + 0.5f * width,
+//                bounds.bottom - 3.25f * width,
+//                bounds.left + 3.25f * width,
+//                bounds.bottom - 0.75f * width, paint);
+//        canvas.drawLine(
+//                bounds.left + 2.75f * width,
+//                bounds.bottom - 0.75f * width,
+//                bounds.right - 0.375f * width,
+//                bounds.top + 0.75f * width, paint);
     }
 
     private void drawLine(Canvas canvas, int startX, int endX, int centerY, boolean highlight) {
         if (highlight) {
-            paint.setColor(doneStepLineColor);
+            paint.setColor(Color.parseColor("#08CC51"));
             paint.setStrokeWidth(stepLineWidth);
             canvas.drawLine(startX, centerY, endX, centerY, paint);
         } else {
-            paint.setColor(nextStepLineColor);
+            paint.setColor(Color.parseColor("#BCBCBC"));
             paint.setStrokeWidth(stepLineWidth);
             canvas.drawLine(startX, centerY, endX, centerY, paint);
         }

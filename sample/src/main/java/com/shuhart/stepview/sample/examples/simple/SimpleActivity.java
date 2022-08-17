@@ -32,7 +32,7 @@ public class SimpleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentStep < stepView.getStepCount() - 1) {
                     currentStep++;
-                    stepView.go(currentStep, true);
+                    stepView.go(3, true);
                 } else {
                     stepView.done(true);
                 }
@@ -67,7 +67,7 @@ public class SimpleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentStep2 < stepView2.getStepCount() - 1) {
                     currentStep2++;
-                    stepView2.go(currentStep2, true);
+                    stepView2.go(4, true);
                 } else {
                     stepView2.done(true);
                 }

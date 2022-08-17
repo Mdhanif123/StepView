@@ -20,6 +20,7 @@
         <activity android:name=".examples.recyclerview.RecyclerViewExampleActivity" />
         <activity android:name=".examples.scrollview.ScrollViewExampleActivity" />
         <activity android:name=".examples.simple.SimpleActivity" />
+        <activity android:name=".main.MyCustomStepView" />
         <activity android:name=".examples.customise.CustomiseActivity" />
         <activity android:name=".examples.rtl.RTLActivity" />
         <activity android:name=".examples.delayed.DelayedInitActivity" />

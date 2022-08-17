@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(MainAdapter.Item item) {
                 switch (item) {
                     case SIMPLE:
-                        startActivity(new Intent(MainActivity.this, SimpleActivity.class));
+                        startActivity(new Intent(MainActivity.this, MyCustomStepView.class));
                         break;
                     case RECYCLER_VIEW:
                         startActivity(new Intent(MainActivity.this, RecyclerViewExampleActivity.class));
