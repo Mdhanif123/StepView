@@ -792,14 +792,14 @@ public class StepView extends View {
     }
 
     private void drawText(Canvas canvas, String text, int y, int step) {
-//        if (text.isEmpty()) {
-//            return;
-//        }
-//        StaticLayout layout = textLayouts[step];
-//        canvas.save();
-//        canvas.translate(circlesX[step], y);
-//        layout.draw(canvas);
-//        canvas.restore();
+        if (text.isEmpty()) {
+            return;
+        }
+        StaticLayout layout = textLayouts[step];
+        canvas.save();
+        canvas.translate(circlesX[step], y);
+        layout.draw(canvas);
+        canvas.restore();
     }
 
     private void drawCheckMark(Canvas canvas, int circleCenterX, int circleCenterY) {
