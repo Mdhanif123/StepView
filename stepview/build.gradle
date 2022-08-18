@@ -1,4 +1,22 @@
+plugins {
+    id 'maven-publish'
+}
+
 apply plugin: 'com.android.library'
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.HanifRishvi'
+                artifactId = 'StepView'
+                version = '1.5.2'
+            }
+        }
+    }
+}
 
 ext {
     PUBLISH_GROUP_ID = 'com.github.shuhart'
