@@ -10,21 +10,13 @@ afterEvaluate {
             // Creates a Maven publication called "release".
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.github.HanifRishvi'
+                groupId = 'com.github.Mdhanif123'
                 artifactId = 'StepView'
                 version = '1.5.2'
             }
         }
     }
 }
-
-ext {
-    PUBLISH_GROUP_ID = 'com.github.shuhart'
-    PUBLISH_VERSION = '1.5.1'
-    PUBLISH_ARTIFACT_ID = 'stepview'
-}
-
-apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
 android {
     compileSdkVersion 32
